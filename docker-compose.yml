@@ -8,5 +8,6 @@ services:
     environment:
       - NB_UID=501
       - NB_GID=20
+      - PYTHONPATH=/home/jovyan/abm
     volumes:
       - .:/home/jovyan/abm
