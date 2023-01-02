@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  jupyterlab:
+    user: root
+    build: .
+    ports:
+      - "8888:8888"
+    environment:
+      - NB_UID=501
+      - NB_GID=20
+    volumes:
+      - .:/home/jovyan/abm
