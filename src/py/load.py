@@ -2,6 +2,7 @@ from typing import Optional
 import mesa
 from .util import *
 
+
 class Load:
     """Class for simulated loads."""
 
@@ -13,6 +14,9 @@ class Load:
         planned_tick: int,  # scheduled "activity date"
         rate: Optional[int] = None,
     ) -> None:
+        from .experiment import CONFIG
+
+        self.config = CONFIG
         self.load_id = load_id
         self.o = o
         self.d = d
@@ -33,7 +37,7 @@ class Load:
     def get_transit_time(self) -> int:
         """Get number of ticks expected to move"""
         dist = self.get_distance()
-        required_ticks = ceildiv(dist, CONFIG['carrier_speed_per_tick'])
+        required_ticks = ceildiv(dist, self.config.carrier_speed_per_tick)
         return required_ticks
 
     def get_drop_tick(self) -> int:

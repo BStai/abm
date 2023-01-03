@@ -3,13 +3,22 @@ from .shipper import ShipperAgent
 from .carrier import CarrierAgent
 
 from collections import Counter
+from statistics import mean
+  
 
 class FreightMarketModel(mesa.Model):
     """Freight market model."""
 
     def __init__(
-        self, n_shippers: int, n_carriers: int, width: int, height: int
+        self,
+        n_shippers: int,
+        n_carriers: int,
+        width: int,
+        height: int,  # TODO decide if these should just come from the config
     ) -> None:
+        from .experiment import CONFIG
+
+        self.config = CONFIG
         self.n_shippers = n_shippers
         self.n_carriers = n_carriers
         self.carrier_grid = mesa.space.MultiGrid(width, height, torus=False)
@@ -35,10 +44,9 @@ class FreightMarketModel(mesa.Model):
         self.datacollector = mesa.DataCollector(
             # model_reporters={"Gini": compute_gini}, agent_reporters={"Wealth": "wealth"}
             model_reporters={
-                "N_Loads": count_unbooked_loads,
-                "N_Carriers": count_available_carriers,
-                "unbooked_roll_total": total_rolls_unbooked,
-                "Carrier_States": count_carrier_states,
+                "n_loads": count_unbooked_loads,
+                "mean_rolls_unbooked": mean_rolls_unbooked,
+                "carrier_states": count_carrier_states,
             }
         )
 
@@ -72,10 +80,12 @@ def count_carrier_states(model: FreightMarketModel):
     )
 
 
-def total_rolls_unbooked(model: FreightMarketModel):
-    return sum(
-        (l.roll_count for loads, _, _ in model.load_grid.coord_iter() for l in loads)
-    )
+def mean_rolls_unbooked(model: FreightMarketModel):
+    roll_counts = [l.roll_count for loads, _, _ in model.load_grid.coord_iter() for l in loads]
+    if len(roll_counts) < 1:
+        return 0
+    else:
+        return mean(roll_counts)
 
 
 # other metrics to track

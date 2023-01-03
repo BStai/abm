@@ -5,7 +5,7 @@ from strenum import StrEnum
 from .load import Load
 from .util import *
 
-# Carrier Agent
+
 class CarrierStatus(StrEnum):
     SEARCHING = "Searching for any load"
     DEADHEADING = "Traveling to next booked load"
@@ -19,6 +19,9 @@ class CarrierAgent(mesa.Agent):
         self, unique_id: int, model: mesa.Model, pos: mesa.space.Position
     ) -> None:
         super().__init__(unique_id, model)
+        from .experiment import CONFIG
+
+        self.config = CONFIG
         self.money = 0  # TODO make some kind of budgeting
         self.loads_moved: int = 0
         self.pos = pos
@@ -39,7 +42,9 @@ class CarrierAgent(mesa.Agent):
             pos = self.pos
 
         n_ticks_to_pick = load.planned_tick - t
-        return CONFIG['carrier_speed_per_tick'] * n_ticks_to_pick >= chebychev_dist(pos, load.o)
+        return self.config.carrier_speed_per_tick * n_ticks_to_pick >= chebychev_dist(
+            pos, load.o
+        )
 
     def does_not_conflict_with_current(self, load: Load) -> bool:
         """check that a load does not conflict with current"""

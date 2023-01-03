@@ -3,6 +3,7 @@ from typing import List
 
 from .load import Load
 
+
 class ShipperAgent(mesa.Agent):
     """An agent simulating a shipper."""
 

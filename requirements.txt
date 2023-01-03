@@ -1,1 +1,3 @@
 mesa
+tqdm
+tqdm[notebook]
