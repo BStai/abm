@@ -5,10 +5,12 @@ Done:
     - got a docker image started to jumpstart the env
     - got running locally vs colab
     - ok writing some config util functions took waaaaay too long
+    - reformated things with an experiment runner and config class
+    - extracted constants to the config class
 
 To do:
 
-Need to figure out my experiment structure
+~Need to figure out my experiment structure~
 
 Decide to go down Julia path?
 - Pros:
@@ -35,5 +37,18 @@ Experiment structure:
 Configuration: json/dicts
 run name
 
+Ok so I got things roughly formatted in a configurable way.
+What should be my first experiments? Probably need to add to the data collection a bit
 
+- Figure out the way distributions change with differing ratios of shipper to carrier to spaces
+
+- agent metrics?
+    - avg distance (eventually)
+    - number of loads
+    - individual carrier status so can get % of time deadheading etc
+
+
+First experiment set
+Keep area fixed
+Grid search carrier and shipper ratios
 

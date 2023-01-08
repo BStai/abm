@@ -1,27 +1,29 @@
 import mesa
 from typing import List, Optional
 from strenum import StrEnum
+from enum import Enum
 
 from .load import Load
 from .util import *
 
 
 class CarrierStatus(StrEnum):
-    SEARCHING = "Searching for any load"
-    DEADHEADING = "Traveling to next booked load"
-    IN_TRANSIT = "Carrying load"
+    SEARCHING = "searching"
+    DEADHEADING = "deadheading"
+    IN_TRANSIT = "in transit"
 
 
 class CarrierAgent(mesa.Agent):
     """An agent simulating a carrier."""
 
     def __init__(
-        self, unique_id: int, model: mesa.Model, pos: mesa.space.Position
+        self,
+        unique_id: int,
+        model: mesa.Model,
+        pos: mesa.space.Position,
     ) -> None:
         super().__init__(unique_id, model)
-        from .experiment import CONFIG
 
-        self.config = CONFIG
         self.money = 0  # TODO make some kind of budgeting
         self.loads_moved: int = 0
         self.pos = pos
@@ -42,8 +44,9 @@ class CarrierAgent(mesa.Agent):
             pos = self.pos
 
         n_ticks_to_pick = load.planned_tick - t
-        return self.config.carrier_speed_per_tick * n_ticks_to_pick >= chebychev_dist(
-            pos, load.o
+        return (
+            self.model.config.carrier_speed_per_tick * n_ticks_to_pick
+            >= chebychev_dist(pos, load.o)
         )
 
     def does_not_conflict_with_current(self, load: Load) -> bool:
@@ -55,7 +58,10 @@ class CarrierAgent(mesa.Agent):
 
     def search_pos_for_load(self, pos: mesa.space.Position):
         search_neighborhood = self.model.load_grid.get_neighborhood(
-            pos=pos, moore=True, include_center=True, radius=1
+            pos=pos,
+            moore=True,
+            include_center=True,
+            radius=self.model.config.carrier_search_radius,
         )
         load_list = self.model.load_grid.get_cell_list_contents(search_neighborhood)
         return load_list
@@ -105,8 +111,12 @@ class CarrierAgent(mesa.Agent):
                 return  # no load to handle
 
         # if have a current load
+
+        # if have current load and not yet to pick = deadheaading
         if self.current_load.planned_tick > self.model.current_tick:
             self.status = CarrierStatus.DEADHEADING
+
+        # if have a load and between pick and drop = in transit
         elif (self.current_load.planned_tick <= self.model.current_tick) and (
             self.current_load.get_drop_tick() > self.model.current_tick
         ):
@@ -126,9 +136,16 @@ class CarrierAgent(mesa.Agent):
                 self.status = CarrierStatus.DEADHEADING
 
     def move_while_searching(self):
-        # should berandom walk
-        # for now just stay put. Very boring carrier
-        pass
+        if self.model.config.carrier_search_type == "stay_put":
+            return
+        elif self.model.config.carrier_search_type == "random_walk":
+            radius = self.model.config.carrier_rand_walk_amount
+            search_neighborhood = self.model.load_grid.get_neighborhood(
+                pos=self.pos, moore=True, include_center=True, radius=radius
+            )
+            new_position = self.random.choice(search_neighborhood)
+            self.self.model.carrier_grid.move_agent(self, new_position)
+            return
 
     def step(self):
         self.add_to_load_queue()

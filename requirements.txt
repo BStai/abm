@@ -1,3 +1,5 @@
+pandas
 mesa
 tqdm
 tqdm[notebook]
+fastparquet

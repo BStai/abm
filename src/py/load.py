@@ -8,15 +8,15 @@ class Load:
 
     def __init__(
         self,
+        experiment_config,
         load_id: str,
         o: mesa.space.Position,
         d: mesa.space.Position,
         planned_tick: int,  # scheduled "activity date"
         rate: Optional[int] = None,
     ) -> None:
-        from .experiment import CONFIG
 
-        self.config = CONFIG
+        self.config = experiment_config
         self.load_id = load_id
         self.o = o
         self.d = d

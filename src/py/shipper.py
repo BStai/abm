@@ -14,24 +14,38 @@ class ShipperAgent(mesa.Agent):
     def get_rate(self, load: Load):
         """pick a rate to put on a load"""
         dist = load.get_distance()
-        rate = 3 * dist  # fixed rate per distance to start
+        rate = (
+            self.model.config.shipper_starting_rate * dist
+        )  # fixed rate per distance to start
         return rate
+
+    def get_load_locations(self) -> mesa.space.Position:
+        w = self.model.load_grid.width
+        h = self.model.load_grid.height
+        o = self.random.randrange(w), self.random.randrange(h)
+        d = self.random.randrange(w), self.random.randrange(h)
+        return o, d
 
     def spawn_loads(self, current_tick: int) -> None:
         """Spawn new loads."""
         # spawn on load to start
         # cap number of unbooked loads
-        if len(self.get_unbooked_loads()) >= 50:
+        if len(self.get_unbooked_loads()) >= self.model.config.shipper_max_unbooked:
             return
 
         # id is "shipper id_tick spawned_n"
-        load_id = str(self.unique_id) + "_" + str(self.model.current_tick) + "_0"
-        w = self.model.load_grid.width
-        h = self.model.load_grid.height
-        o = self.random.randrange(w), self.random.randrange(h)
-        d = self.random.randrange(w), self.random.randrange(h)
-        planned_tick = current_tick + 3  # start with making all new loads 3 ticks out
-        load = Load(load_id=load_id, o=o, d=d, planned_tick=planned_tick)
+        load_id = (
+            str(self.unique_id) + "_" + str(self.model.current_tick) + "_0"
+        )  # eventually implement batch loads
+        o, d = self.get_load_locations()
+        planned_tick = current_tick + self.model.config.shipper_lead_time
+        load = Load(
+            experiment_config=self.model.config,
+            load_id=load_id,
+            o=o,
+            d=d,
+            planned_tick=planned_tick,
+        )
         load.rate = self.get_rate(load)
 
         self.loads.append(load)
