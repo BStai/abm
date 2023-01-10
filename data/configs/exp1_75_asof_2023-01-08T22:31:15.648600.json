@@ -1,0 +1,1 @@
+{"name": "exp1_75", "version": 0, "n_shippers": 155, "n_carriers": 444, "width": 40, "height": 10, "carrier_speed_per_tick": 3, "carrier_search_radius": 1, "carrier_search_type": "stay_put", "carrier_rand_walk_amount": 1, "shipper_starting_rate": 3, "shipper_max_unbooked": 50, "shipper_lead_time": 3}

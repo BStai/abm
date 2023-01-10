@@ -1,3 +1,11 @@
+## 2023-01-09
+
+Put together EDA on exp1 runs. Got some nice plots vs ratio of carriers to shippers.
+
+## 2023-01-08
+
+fix the dependency injection - combine the experiment runner with the model code
+
 ## 2023-01-02
 
 Done:
@@ -51,4 +59,6 @@ What should be my first experiments? Probably need to add to the data collection
 First experiment set
 Keep area fixed
 Grid search carrier and shipper ratios
+
+
 
