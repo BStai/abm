@@ -1,3 +1,44 @@
+
+## 2023-02-11
+A different model - one that looks at rate of change in rates/costs in the two sided marketplace
+
+single agent type: load in ccode wcode pairs
+can have new agents - can have some disappear
+
+at each tick an agent rolls for load or no load
+if load pick the rate from a distribution  - same or different. then if different higher and lower with some probability and picking from a distribution
+then find a cost. 
+with some probability the previous cost.
+otherwise based on some function of the rate a different cost
+
+mark down file average, load count
+
+the cost and rate functions should pull from some 'market' change
+how do you do that? 
+global?
+
+
+## 2023-01-15
+
+Next investigations
+- Collect data on 'lanes'
+- collect data on geographic location of carriers
+- Non-uniform distribution of lanes
+
+
+Implementing money will be tricky
+- add priority sorting for carriers 
+    - right now they take random loads in their search 
+    - Have them take the largest rate <-  this would be the easiest thing to try first
+        then would want to measure the average rate by number of rolls
+- add a mechanic of auto incrementing the rate for every day rolled 
+
+I want to eventually get an idea of how much a tender rejection costs us vs taking a negative
+That's ultimately about the stream of loads vs the individual load.
+steam of loads = probability of future loads @ rate
+rejecting a load decreases the probability of getting the next load - by how much
+
+
 ## 2023-01-09
 
 Put together EDA on exp1 runs. Got some nice plots vs ratio of carriers to shippers.
